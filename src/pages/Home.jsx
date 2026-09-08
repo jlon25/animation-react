@@ -52,7 +52,7 @@ const examples = [
       "Matrice d’évolution des activités et des partenaires avec transitions continues entre état passé, actuel et futur.",
   },
   {
-    path: "/example8",
+    path: "/example8?hidden-menu=true&isAnimated=true",
     title: "Exemple 8",
     subtitle: "Activités et partenaires avec sous-divisions",
     description:
