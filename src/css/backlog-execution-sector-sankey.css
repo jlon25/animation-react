@@ -1,0 +1,294 @@
+.bes-sankey-renderer {
+  width: 100%;
+  height: 50vh;
+  position: relative;
+  overflow: hidden;
+  padding: 4px 8px;
+}
+
+.bes-sankey-renderer.with-details {
+  height: 50vh;
+}
+
+.bes-sankey-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Titres des colonnes */
+.bes-column-label {
+  fill: var(--blue-dark);
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: 0.01em;
+}
+
+/* Rubans */
+.bes-ribbon {
+  opacity: 0.26;
+  cursor: pointer;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.bes-ribbon:hover {
+  opacity: 0.48;
+  filter: drop-shadow(0 8px 12px rgba(38, 91, 125, 0.18));
+}
+
+/* Enveloppes de colonnes */
+.bes-column-envelope {
+  fill: rgba(168, 189, 203, 0.08);
+  stroke: rgba(38, 91, 125, 0.28);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+/* Colonne gauche : backlog */
+.bes-pendi5g-envelope {
+  fill: rgba(168, 189, 203, 0.1);
+  stroke: rgba(38, 91, 125, 0.32);
+}
+
+/* Colonne centrale : réalisée */
+.bes-execution-envelope {
+  fill: rgba(255, 255, 255, 0.32);
+  stroke: rgba(38, 91, 125, 0.18);
+}
+
+/* Colonne droite : secteurs */
+.bes-sector-envelope {
+  fill: rgba(168, 189, 203, 0.08);
+  stroke: rgba(38, 91, 125, 0.28);
+}
+
+/* Nœuds */
+.bes-node {
+  cursor: pointer;
+  stroke: none;
+  filter: drop-shadow(0 8px 14px rgba(38, 91, 125, 0.14));
+}
+
+/* Backlog : segments collés, sans bordures individuelles */
+.bes-pending-node {
+  stroke: none;
+  filter: none;
+}
+
+/* Réalisée et secteurs : cartes plus visibles */
+.bes-execution-node,
+.bes-sector-node {
+  stroke: rgba(255, 255, 255, 0.72);
+  stroke-width: 1.5;
+}
+
+/* Labels dans les blocs */
+.bes-node-inside-label {
+  fill: #ffffff;
+  font-size: 12px;
+  font-weight: 950;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(38, 91, 125, 0.3);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
+
+.bes-node-inside-quantity {
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.bes-node-inside-label-small {
+  font-size: 10px;
+}
+
+/* Tooltip */
+.bes-tooltip {
+  position: fixed;
+  z-index: 9999;
+  display: none;
+  max-width: 240px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--white);
+  background: var(--blue-dark);
+  font-size: 0.8rem;
+  font-weight: 850;
+  line-height: 1.25;
+  white-space: pre-line;
+  pointer-events: none;
+  box-shadow: 0 12px 28px rgba(38, 91, 125, 0.3);
+}
+
+.bes-tooltip.is-visible {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .bes-sankey-renderer {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 560px;
+  }
+
+  .bes-sankey-svg {
+    min-width: 820px;
+  }
+
+  .bes-column-label {
+    font-size: 12px;
+  }
+
+  .bes-node-inside-label {
+    font-size: 10px;
+  }
+
+  .bes-node-inside-quantity {
+    font-size: 9px;
+  }
+}
+.bes-column-side-total {
+  fill: var(--blue-dark);
+  font-size: 14px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.filter-checkbox-field {
+  gap: 6px;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--blue-dark);
+  font-size: 0.9rem;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.filter-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--blue-dark);
+}
+
+.bes-details-panel {
+  margin: 7px;
+  padding: 10px;
+  border: 1px solid rgba(38, 91, 125, 0.14);
+  border-radius: 18px;
+  background: rgba(168, 189, 203, 0.08);
+}
+
+.bes-details-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.bes-details-header span {
+  display: block;
+  color: var(--blue-medium);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bes-details-header strong {
+  display: block;
+  color: var(--blue-dark);
+  font-size: 1rem;
+  font-weight: 950;
+}
+
+.bes-details-header p {
+  margin: 0;
+  color: #52616b;
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-align: right;
+}
+
+.bes-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.bes-detail-card {
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 18px rgba(38, 91, 125, 0.08);
+}
+
+.bes-detail-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  color: var(--blue-dark);
+}
+
+.bes-detail-title strong {
+  font-size: 0.95rem;
+  font-weight: 950;
+}
+
+.bes-detail-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.bes-detail-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  gap: 8px;
+}
+
+.bes-detail-values div {
+  min-width: 0;
+  padding: 8px;
+  border-radius: 10px;
+  background: rgba(168, 189, 203, 0.14);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bes-detail-values span {
+  display: block;
+  color: #5f6f78;
+  font-size: 0.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.bes-detail-values strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--blue-dark);
+  font-size: 0.95rem;
+  font-weight: 950;
+}
+
+.bes-detail-difference.is-positive strong {
+  color: #1d6b3a;
+}
+
+.bes-detail-difference.is-negative strong {
+  color: #b3261e;
+}
+
+.bes-detail-difference.is-neutral strong {
+  color: var(--blue-dark);
+}

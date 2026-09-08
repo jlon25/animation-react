@@ -1,0 +1,143 @@
+.sankey-renderer {
+  width: 100%;
+  height: 620px;
+  position: relative;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.sankey-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .sankey-renderer {
+    height: 560px;
+    padding: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .sankey-svg {
+    min-width: 760px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sankey-renderer {
+    height: 540px;
+  }
+
+  .sankey-svg {
+    min-width: 720px;
+  }
+
+  .sankey-quarter-label {
+    font-size: 15px;
+  }
+
+  .sankey-quarter-subtitle {
+    font-size: 10px;
+  }
+
+  .node-title {
+    font-size: 10px;
+  }
+
+  .node-value {
+    font-size: 9px;
+  }
+}
+
+.sankey-quarter-label {
+  fill: var(--blue-dark);
+  font-size: 19px;
+  font-weight: 950;
+}
+
+.sankey-quarter-subtitle {
+  fill: var(--blue-medium);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.sankey-ribbon {
+  opacity: 0.34;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.sankey-ribbon:hover {
+  opacity: 0.62;
+}
+
+.sankey-node {
+  cursor: pointer;
+}
+
+.node-rect {
+  stroke: rgba(255, 255, 255, 0.72);
+  stroke-width: 2;
+  filter: drop-shadow(0 10px 14px rgba(38, 91, 125, 0.16));
+}
+
+.node-title {
+  fill: var(--white);
+  font-size: 11px;
+  font-weight: 950;
+  pointer-events: none;
+}
+
+.node-value {
+  fill: rgba(255, 255, 255, 0.92);
+  font-size: 10px;
+  font-weight: 850;
+  pointer-events: none;
+}
+
+.initial-node .node-title {
+  font-size: 12px;
+}
+
+.initial-node .node-value {
+  font-size: 10px;
+}
+
+.sankey-tooltip {
+  position: fixed;
+  z-index: 9999;
+  display: none;
+  max-width: 240px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--white);
+  background: var(--blue-dark);
+  font-size: 0.8rem;
+  font-weight: 850;
+  line-height: 1.25;
+  white-space: pre-line;
+  pointer-events: none;
+  box-shadow: 0 12px 28px rgba(38, 91, 125, 0.3);
+}
+
+.sankey-tooltip.is-visible {
+  display: block;
+}
+
+.node-title,
+.node-value,
+.sankey-quarter-label,
+.sankey-quarter-subtitle {
+  pointer-events: none;
+  dominant-baseline: middle;
+}
+
+.node-title,
+.node-value {
+  paint-order: stroke;
+  stroke: rgba(38, 91, 125, 0.18);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
