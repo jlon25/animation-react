@@ -1,0 +1,54 @@
+.apdm-external-sector-layer {
+  pointer-events: none;
+}
+
+.apdm-external-sector-max-frame {
+  fill: none;
+  stroke: rgba(38, 91, 125, 0.14);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 8;
+  vector-effect: non-scaling-stroke;
+}
+
+.apdm-external-sector-frame {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 12 8;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.96;
+  filter: drop-shadow(0 8px 14px rgba(38, 91, 125, 0.1));
+  transition: x 260ms ease, y 260ms ease, width 260ms ease, height 260ms ease,
+    stroke-width 260ms ease;
+}
+
+.apdm-external-sector-label-background {
+  fill: rgba(255, 255, 255, 0.92);
+  stroke: rgba(38, 91, 125, 0.14);
+  stroke-width: 1;
+}
+
+.apdm-external-sector-label {
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  dominant-baseline: middle;
+}
+
+.apdm-external-sector-demand {
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  dominant-baseline: middle;
+}
+
+@media (max-width: 980px) {
+  .apdm-external-sector-label {
+    font-size: 8px;
+  }
+
+  .apdm-external-sector-demand {
+    font-size: 7px;
+  }
+}

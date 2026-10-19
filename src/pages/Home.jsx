@@ -52,11 +52,46 @@ const examples = [
       "Matrice d’évolution des activités et des partenaires avec transitions continues entre état passé, actuel et futur.",
   },
   {
-    path: "/example8?hidden-menu=true&isAnimated=true",
+    path: "/example8",
     title: "Exemple 8",
     subtitle: "Activités et partenaires avec sous-divisions",
     description:
       "Matrice d’évolution des activités et des partenaires et leurs sous-divisions avec transitions continues entre état passé, actuel et futur.",
+  },
+  {
+    path: "/example9",
+    title: "Exemple 9",
+    subtitle: "Motifs d’attente et leviers d’action",
+    description:
+      "Visualisation des dossiers en attente selon leur niveau de qualification, afin de distinguer les zones d’incertitude des situations déjà identifiées et actionnables.",
+  },
+  {
+    path: "/example10",
+    title: "Exemple 10",
+    subtitle: "Sankey classique des dossiers en attente",
+    description:
+      "Visualisation classique des dossiers en attente par motif et situation, avec nœuds fins, flux proportionnels et palette visuelle SAM.",
+  },
+  {
+    path: "/example11",
+    title: "Exemple 11",
+    subtitle: "Besoin sectoriel et adaptation SAM",
+    description:
+      "Matrice comparant l’évolution du besoin global des secteurs avec l’affectation des ressources SAM dans les activités nécessaires.",
+  },
+  {
+    path: "/example12",
+    title: "Exemple 12",
+    subtitle: "Besoin global et adaptation SAM",
+    description:
+      "Matrice d’affectation des ressources complétée par une jauge inférieure représentant l’évolution du besoin global sur la période.",
+  },
+  {
+    path: "/example13",
+    title: "Exemple 13",
+    subtitle: "Transfert Asile / Séjour",
+    description:
+      "Visualisation du transfert des ressources internes entre Asile et Séjour selon les Pendenzen et l’évolution des FTE.",
   },
 ];
 

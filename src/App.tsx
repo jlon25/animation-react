@@ -8,6 +8,11 @@ import Example5 from "./pages/Example5";
 import Example6 from "./pages/Example6";
 import Example7 from "./pages/Example7";
 import Example8 from "./pages/Example8";
+import Example9 from "./pages/Example9";
+import Example10 from "./pages/Example10";
+import Example11 from "./pages/Example11";
+import Example12 from "./pages/Example12";
+import Example13 from "./pages/Example13";
 import "./css/styles.css";
 
 function App() {
@@ -23,6 +28,11 @@ function App() {
         <Route path="/example6" element={<Example6 />} />
         <Route path="/example7" element={<Example7 />} />
         <Route path="/example8" element={<Example8 />} />
+        <Route path="/example9" element={<Example9 />} />
+        <Route path="/example10" element={<Example10 />} />
+        <Route path="/example11" element={<Example11 />} />
+        <Route path="/example12" element={<Example12 />} />
+        <Route path="/example13" element={<Example13 />} />
       </Routes>
     </BrowserRouter>
   );

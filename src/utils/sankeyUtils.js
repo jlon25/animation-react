@@ -275,7 +275,7 @@ export function getNodeTextMode(node, layout) {
   return "none";
 }
 
-export function parseSankeyWeights(value, expectedLength) {
+function parseSankeyWeights(value, expectedLength) {
   const parsed = String(value || "")
     .split(",")
     .map((item) => Number(item.trim()))

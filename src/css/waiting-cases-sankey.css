@@ -1,0 +1,108 @@
+.wcs-renderer {
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  padding: 8px 12px 10px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: radial-gradient(
+      circle at 50% 35%,
+      rgba(168, 189, 203, 0.28),
+      transparent 52%
+    ),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 246, 250, 0.9));
+}
+
+.wcs-title {
+  margin: 0;
+  color: #265b7d;
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  padding: 0.5rem 0 0 0.5rem;
+}
+
+.wcs-svg {
+  width: 100%;
+  height: calc(100% - 30px);
+  min-height: 470px;
+  display: block;
+  overflow: visible;
+}
+
+.wcs-column-label {
+  fill: #265b7d;
+  font-size: 16px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.wcs-node-inside-label {
+  fill: #ffffff;
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.wcs-node-inside-value {
+  font-size: 11.5px;
+  font-weight: 950;
+}
+
+.wcs-node-inside-percent {
+  font-size: 9.5px;
+  font-weight: 850;
+  opacity: 0.92;
+}
+
+.wcs-node-inside-label-compact {
+  font-size: 9.2px;
+}
+
+.wcs-node-inside-label-small {
+  font-size: 8.4px;
+  font-weight: 950;
+}
+
+.wcs-node-inside-label-tiny {
+  font-size: 8px;
+  font-weight: 950;
+}
+
+.wcs-column-side-total {
+  fill: #265b7d;
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 980px) {
+  .wcs-renderer {
+    min-height: 440px;
+  }
+
+  .wcs-svg {
+    min-height: 380px;
+  }
+
+  .wcs-column-label {
+    font-size: 14px;
+  }
+
+  .wcs-column-side-total {
+    font-size: 12px;
+  }
+
+  .wcs-node-inside-label {
+    font-size: 9px;
+  }
+
+  .wcs-node-inside-value {
+    font-size: 10px;
+  }
+}
