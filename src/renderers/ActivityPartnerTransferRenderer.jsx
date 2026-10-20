@@ -694,11 +694,7 @@ function buildTransferModel(filters = {}, gaugeValues = {}) {
       asylumDemandCurvePower
     );
 
-    asylumDemandRatio = lerp(
-      asylumMinimumDemandRatio,
-      1,
-      curvedDemandRatio
-    );
+    asylumDemandRatio = lerp(asylumMinimumDemandRatio, 1, curvedDemandRatio);
   }
 
   const asylumResources = clamp(
@@ -810,12 +806,7 @@ function useElementSize() {
   return [elementRef, size];
 }
 
-function resolveWidthsWithMinimum(
-  items,
-  availableWidth,
-  gap,
-  volumePower = 1
-) {
+function resolveWidthsWithMinimum(items, availableWidth, gap, volumePower = 1) {
   const count = items.length;
 
   if (count === 0) {
@@ -857,11 +848,19 @@ function resolveWidthsWithMinimum(
   });
 }
 
-function buildMatrixLayout(model, size) {
+function buildMatrixLayout(model, size, activityContainerWidthPercent = 100) {
   const width = Math.max(MATRIX_MIN_WIDTH, size.width);
   const height = Math.max(MATRIX_MIN_HEIGHT, size.height);
   const frameHeight = Math.max(300, height - MATRIX_TOP - MATRIX_BOTTOM);
   const frameY = MATRIX_TOP;
+
+  // Le viewBox SVG conserve sa largeur d'origine : seule la zone des
+  // activites est reduite et centree. La jauge au-dessus est independante.
+  const availableActivityWidth = Math.max(1, width - MATRIX_PADDING_X * 2);
+  const safeWidthPercent = clamp(activityContainerWidthPercent, 40, 100);
+  const activityContainerWidth =
+    availableActivityWidth * (safeWidthPercent / 100);
+  const activityContainerX = (width - activityContainerWidth) / 2;
 
   const activities = model.activities.map((activity) => ({
     ...activity,
@@ -873,12 +872,12 @@ function buildMatrixLayout(model, size) {
 
   const widths = resolveWidthsWithMinimum(
     activities,
-    width - MATRIX_PADDING_X * 2,
+    activityContainerWidth,
     MATRIX_ACTIVITY_GAP,
     MATRIX_ACTIVITY_WIDTH_VOLUME_POWER
   );
 
-  let runningX = MATRIX_PADDING_X;
+  let runningX = activityContainerX;
 
   const positionedActivities = activities.map((activity, index) => {
     const frameWidth = widths[index] || 120;
@@ -912,6 +911,9 @@ function buildMatrixLayout(model, size) {
   return {
     width,
     height,
+    activityContainerX,
+    activityContainerWidth,
+    activityContainerRight: activityContainerX + activityContainerWidth,
     activities: positionedActivities,
   };
 }
@@ -994,6 +996,27 @@ function getDivisionRows(subColumn) {
     height: rowHeight,
     centerY: subColumn.y + rowHeight * index + rowHeight / 2,
   }));
+}
+
+// Répartition VISUELLE uniquement : chaque ligne Séjour (ADAR / DB ZI)
+// est représentée par 3 tranches verticales aux poids normalisés.
+// Les volumes réels, les échelles et les transferts restent inchangés.
+function parseStaySubdivisionRatios(value) {
+  const defaultRatios = [0.2, 0.3, 0.5];
+  const parts = String(value ?? "20,30,50")
+    .split(/[,\s;/|]+/)
+    .filter(Boolean);
+
+  if (parts.length !== 3) {
+    return defaultRatios;
+  }
+
+  const weights = parts.map((part) =>
+    Math.max(0, parseFlexibleNumber(part.replace(/%/g, ""), 0))
+  );
+  const total = weights.reduce((sum, weight) => sum + weight, 0);
+
+  return total > 0 ? weights.map((weight) => weight / total) : defaultRatios;
 }
 
 function getDivisionTextLayout(width, rowHeight, showDivisionValues = false) {
@@ -1510,30 +1533,39 @@ function DomainGauge({ filters, gaugeModel, onApplyGaugeValues }) {
   );
 }
 
-function ActivityLabel({ activity }) {
+function ActivityLabel({ activity, showDivisionValues }) {
   const isStayActivity = activity.id === "sejour";
+
+  // Lorsque les chiffres sont masqués, on centre le titre
+  // entre sa position initiale et celle du total numérique.
+  const titleY = showDivisionValues
+    ? activity.headerY
+    : (activity.headerY + activity.valueY) / 2;
 
   return (
     <g>
       <text
         className="aptr-activity-title"
         x={activity.centerX}
-        y={activity.headerY}
+        y={titleY}
         textAnchor="middle"
       >
         {activity.name}
       </text>
-      <text
-        className="aptr-activity-volume"
-        x={activity.centerX}
-        y={activity.valueY}
-        textAnchor="middle"
-      >
-        {formatNumber(activity.volume)}
-        {isStayActivity && (
-          <tspan className="aptr-work-package-asterisk">*</tspan>
-        )}
-      </text>
+
+      {showDivisionValues && (
+        <text
+          className="aptr-activity-volume"
+          x={activity.centerX}
+          y={activity.valueY}
+          textAnchor="middle"
+        >
+          {formatNumber(activity.volume)}
+          {isStayActivity && (
+            <tspan className="aptr-work-package-asterisk">*</tspan>
+          )}
+        </text>
+      )}
     </g>
   );
 }
@@ -1621,7 +1653,87 @@ function DivisionRows({ subColumn, showDivisionValues }) {
   );
 }
 
-function ActivityColumn({ activity, showDivisionValues }) {
+// Trois plages bleues très légères, séparées par des pointillés.
+// Elles suggèrent un découpage sans ajouter de fausses catégories ni valeurs.
+function StayDivisionSubcolumns({ subColumn, staySubdivisionRatios }) {
+  const rows = getDivisionRows(subColumn);
+  const clipId = `aptr-stay-bar-clip-${normalizeId(subColumn.id)}`;
+  const cornerRadius = Math.min(24, subColumn.width / 2, subColumn.height / 6);
+
+  return (
+    <g className="aptr-stay-subdivisions" aria-hidden="true">
+      <defs>
+        <clipPath id={clipId}>
+          <rect
+            x={subColumn.x}
+            y={subColumn.y}
+            width={subColumn.width}
+            height={subColumn.height}
+            rx={cornerRadius}
+          />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#${clipId})`}>
+        {rows.map((row) => {
+          const divisionId = normalizeId(row.shortName || row.name).replace(
+            /-/g,
+            ""
+          );
+          const ratios =
+            divisionId === "adar"
+              ? staySubdivisionRatios.adar
+              : divisionId === "dbzi"
+              ? staySubdivisionRatios.dbzi
+              : null;
+
+          if (!ratios) return null;
+
+          let runningX = subColumn.x;
+          return (
+            <g key={`stay-shades-${row.id}-${row.index}`}>
+              {ratios.map((ratio, index) => {
+                const sliceX = runningX;
+                const sliceWidth = subColumn.width * ratio;
+                runningX += sliceWidth;
+
+                return (
+                  <g key={`slice-${index}`}>
+                    {sliceWidth > 0 && (
+                      <rect
+                        className={`aptr-stay-slice aptr-stay-slice--${
+                          index + 1
+                        }`}
+                        x={sliceX}
+                        y={row.y}
+                        width={sliceWidth}
+                        height={row.height}
+                      />
+                    )}
+                    {index < ratios.length - 1 && (
+                      <line
+                        className="aptr-stay-slice-divider"
+                        x1={runningX}
+                        x2={runningX}
+                        y1={row.y + 5}
+                        y2={row.y + row.height - 5}
+                      />
+                    )}
+                  </g>
+                );
+              })}
+            </g>
+          );
+        })}
+      </g>
+    </g>
+  );
+}
+
+function ActivityColumn({
+  activity,
+  showDivisionValues,
+  staySubdivisionRatios,
+}) {
   const subColumns = getSubColumns(activity);
   const hasSubActivities = subColumns.length > 1;
 
@@ -1635,7 +1747,10 @@ function ActivityColumn({ activity, showDivisionValues }) {
         height={activity.height}
         rx="18"
       />
-      <ActivityLabel activity={activity} />
+      <ActivityLabel
+        activity={activity}
+        showDivisionValues={showDivisionValues}
+      />
 
       {subColumns.map((subColumn) => (
         <g key={`${activity.id}-${subColumn.id}`}>
@@ -1669,6 +1784,12 @@ function ActivityColumn({ activity, showDivisionValues }) {
             rx={Math.min(24, subColumn.width / 2, subColumn.height / 6)}
             fill={activity.color}
           />
+          {activity.id === "sejour" && (
+            <StayDivisionSubcolumns
+              subColumn={subColumn}
+              staySubdivisionRatios={staySubdivisionRatios}
+            />
+          )}
           <DivisionRows
             subColumn={subColumn}
             showDivisionValues={showDivisionValues}
@@ -1681,53 +1802,90 @@ function ActivityColumn({ activity, showDivisionValues }) {
 
 // Ligne de référence transversale, indépendante de la capacité calculée.
 // Le pourcentage est mesuré du bas vers le haut de la zone colorée des colonnes.
-function MinimumWorkThreshold({ layout, percent, label }) {
-  const safePercent = clamp(Number(percent) || 0, 0, 100);
+function MinimumWorkThreshold({
+  layout,
+  percent = 33.33,
+  label = "Seuil",
+  orientation = "horizontal",
+}) {
+  const safePercent = clamp(parseFlexibleNumber(percent, 0), 0, 100);
 
-  // À 0 %, masquer la ligne et son libellé.
-  if (safePercent === 0) {
+  if (safePercent === 0 || !layout.activities?.length) {
     return null;
   }
 
-  const firstActivity = layout.activities[0];
-  const lastActivity = layout.activities[layout.activities.length - 1];
+  const activities = layout.activities;
 
-  if (!firstActivity || !lastActivity) {
-    return null;
-  }
+  const left = Math.min(...activities.map((activity) => activity.x));
 
-  // Les colonnes simples et les deux sous-colonnes Auditions partagent
-  // ce même point de départ et cette même hauteur depuis getSubColumns().
-  const barTop = firstActivity.barY + MATRIX_SUBACTIVITY_LABEL_SPACE;
-  const barHeight = Math.max(
-    1,
-    firstActivity.barHeight - MATRIX_SUBACTIVITY_LABEL_SPACE
+  const right = Math.max(
+    ...activities.map((activity) => activity.x + activity.width)
   );
-  const thresholdY = barTop + barHeight * (1 - safePercent / 100);
 
-  const lineStartX = firstActivity.x;
-  const lineEndX = lastActivity.x + lastActivity.width;
-  const labelY = Math.max(barTop + 12, thresholdY - 10);
+  const top = Math.min(...activities.map((activity) => activity.barY));
+
+  const bottom = Math.max(
+    ...activities.map((activity) => activity.barY + activity.barHeight)
+  );
+
+  const ratio = safePercent / 100;
+  const isVertical = String(orientation).trim().toLowerCase() === "vertical";
+
+  // Orientation verticale :
+  // toute la hauteur du SVG, et pas seulement celle des barres.
+  const x = left + (right - left) * ratio;
+  const y = bottom - (bottom - top) * ratio;
+
+  const lineProps = isVertical
+    ? {
+        x1: x,
+        x2: x,
+        y1: 0,
+        y2: layout.height,
+      }
+    : {
+        x1: left,
+        x2: right,
+        y1: y,
+        y2: y,
+      };
 
   return (
-    <g className="aptr-minimum-work-threshold" aria-hidden="true">
+    <g className="aptr-matrix-minimum-work-threshold" aria-hidden="true">
+      {/* Contour sombre */}
       <line
-        className="aptr-minimum-work-threshold-line"
-        x1={lineStartX}
-        x2={lineEndX}
-        y1={thresholdY}
-        y2={thresholdY}
+        className="aptr-matrix-minimum-work-threshold-outline"
+        {...lineProps}
       />
-      {label && (
-        <text
-          className="aptr-minimum-work-threshold-label"
-          x={lineEndX - 10}
-          y={labelY}
-          textAnchor="end"
-        >
-          {label}
-        </text>
-      )}
+
+      {/* Ligne principale ambrée */}
+      <line
+        className="aptr-matrix-minimum-work-threshold-line"
+        {...lineProps}
+      />
+
+      {label &&
+        (isVertical ? (
+          <text
+            className="aptr-matrix-minimum-work-threshold-label"
+            x={x + 14}
+            y={layout.height / 2}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            transform={`rotate(-90 ${x + 14} ${layout.height / 2})`}
+          >
+            {label}
+          </text>
+        ) : (
+          <text
+            className="aptr-matrix-minimum-work-threshold-label"
+            x={right - 6}
+            y={y - 10}
+            textAnchor="end"
+          >
+            {label}
+          </text>
+        ))}
     </g>
   );
 }
@@ -1738,8 +1896,14 @@ function MatrixSvg({
   showDivisionValues,
   minimumWorkThresholdPercent,
   minimumWorkThresholdLabel,
+  activityContainerWidthPercent,
+  staySubdivisionRatios,
+  minimumWorkThresholdOrientation,
 }) {
-  const layout = useMemo(() => buildMatrixLayout(model, size), [model, size]);
+  const layout = useMemo(
+    () => buildMatrixLayout(model, size, activityContainerWidthPercent),
+    [model, size, activityContainerWidthPercent]
+  );
 
   return (
     <svg
@@ -1754,23 +1918,28 @@ function MatrixSvg({
             key={activity.id}
             activity={activity}
             showDivisionValues={showDivisionValues}
+            staySubdivisionRatios={staySubdivisionRatios}
           />
         ))}
       </g>
+
       <MinimumWorkThreshold
         layout={layout}
         percent={minimumWorkThresholdPercent}
         label={minimumWorkThresholdLabel}
+        orientation={minimumWorkThresholdOrientation}
       />
-      <text
-        className="aptr-matrix-footnote"
-        x={layout.width - 34}
-        y={layout.height - 12}
-        textAnchor="end"
-      >
-        * Pour le domaine Séjour, la valeur représente des paquets de travail et
-        non des prestations.
-      </text>
+      {showDivisionValues && (
+        <text
+          className="aptr-matrix-footnote"
+          x={layout.activityContainerRight}
+          y={layout.height - 12}
+          textAnchor="end"
+        >
+          * Pour le domaine Séjour, la valeur représente des paquets de travail
+          et non des prestations.
+        </text>
+      )}
     </svg>
   );
 }
@@ -2091,13 +2260,32 @@ export default function ActivityPartnerTransferRenderer({
     return parseBoolean(filters.showDivisionValues, false);
   }, [filters.showDivisionValues]);
 
+  // Chaque domaine Séjour possède sa propre répartition à trois tranches.
+  // Les chiffres sont des poids relatifs et sont normalisés automatiquement.
+  const staySubdivisionRatios = useMemo(
+    () => ({
+      adar: parseStaySubdivisionRatios(filters.matrixStaySubdivisionRatiosADAR),
+      dbzi: parseStaySubdivisionRatios(filters.matrixStaySubdivisionRatiosDBZI),
+    }),
+    [
+      filters.matrixStaySubdivisionRatiosADAR,
+      filters.matrixStaySubdivisionRatiosDBZI,
+    ]
+  );
+
+  const activityContainerWidthPercent = clamp(
+    parseFlexibleNumber(filters.matrixActivityContainerWidthPercent, 100),
+    40,
+    100
+  );
+
   const minimumWorkThresholdPercent = clamp(
     parseFlexibleNumber(filters.matrixMinimumWorkThresholdPercent, 100 / 3),
     0,
     100
   );
   const minimumWorkThresholdLabel = String(
-    filters.matrixMinimumWorkThresholdLabel ?? "Seuil minimum de travail"
+    filters.matrixMinimumWorkThresholdLabel ?? "Seuil"
   ).trim();
 
   return (
@@ -2125,6 +2313,11 @@ export default function ActivityPartnerTransferRenderer({
               showDivisionValues={showDivisionValues}
               minimumWorkThresholdPercent={minimumWorkThresholdPercent}
               minimumWorkThresholdLabel={minimumWorkThresholdLabel}
+              activityContainerWidthPercent={activityContainerWidthPercent}
+              staySubdivisionRatios={staySubdivisionRatios}
+              minimumWorkThresholdOrientation={
+                filters.matrixMinimumWorkThresholdOrientation
+              }
             />
           </div>
         </div>

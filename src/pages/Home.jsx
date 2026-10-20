@@ -93,6 +93,14 @@ const examples = [
     description:
       "Visualisation du transfert des ressources internes entre Asile et Séjour selon les Pendenzen et l’évolution des FTE.",
   },
+  ,
+  {
+    path: "/example14",
+    title: "Exemple 14",
+    subtitle: "Activités et partenaires avec sous-divisions",
+    description:
+      "Matrice d’évolution des activités et des partenaires et leurs sous-divisions avec transitions continues entre 2023 et 2026.",
+  },
 ];
 
 export default function Home() {

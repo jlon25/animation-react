@@ -14,14 +14,18 @@ function HomeIcon() {
   );
 }
 
-export default function Header({ filtersCollapsed = false, onToggleFilters }) {
+export default function Header({
+  filtersCollapsed = false,
+  onToggleFilters,
+  showFiltersToggle = true,
+}) {
   return (
     <header>
       <img className="swiss-flag" src={swissFlag} alt="Drapeau suisse" />
 
       <h1>Répartition des ressources SAM</h1>
 
-      {onToggleFilters && (
+      {showFiltersToggle && onToggleFilters && (
         <button
           className="toggle-filters-button"
           type="button"

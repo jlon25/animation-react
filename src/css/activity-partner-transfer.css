@@ -220,6 +220,25 @@
   filter: none;
 }
 
+/* Séjour : trois bandes suggestives par domaine (ADAR et DB ZI).
+   Les nuances claires sont délibérément transparentes : pas de fausse précision. */
+.aptr-stay-subdivisions {
+  pointer-events: none;
+}
+
+.aptr-stay-slice {
+  display: none;
+}
+
+/* Conserver les séparateurs pointillés */
+.aptr-stay-slice-divider {
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  fill: none;
+  pointer-events: none;
+}
+
 .aptr-division-line {
   stroke: rgba(255, 255, 255, 0.22);
   stroke-width: 1;
@@ -248,27 +267,51 @@
 
 /* Repère horizontal de seuil minimum dans la matrice.
    Il ne modifie pas les calculs de capacité ou de demande Asile. */
-.aptr-minimum-work-threshold {
+    .aptr-matrix-minimum-work-threshold {
+      pointer-events: none;
+    }
+    
+    /* Contour pour garantir le contraste */
+    .aptr-matrix-minimum-work-threshold-outline {
+      stroke: #163a55;
+      stroke-width: 5;
+      stroke-dasharray: 7 6;
+      stroke-linecap: butt;
+      vector-effect: non-scaling-stroke;
+    }
+    
+    /* Trait principal */
+    .aptr-matrix-minimum-work-threshold-line {
+      stroke: #FFF0C2;
+      stroke-width: 5;
+      stroke-dasharray: 7 6;
+      stroke-linecap: butt;
+      vector-effect: non-scaling-stroke;
+    }
+  
+  /* Libellé du seuil */
+  .aptr-matrix-minimum-work-threshold-label {
+    fill: #FFF0C2;
+    font-size: 14px;
+    font-weight: 800;
+  
+    paint-order: stroke;
+    stroke: #163a55;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  
+    pointer-events: none;
+  }
+
+  /* Halo discret pour maintenir la lisibilité
+       lorsque le seuil traverse une colonne. */
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+
   pointer-events: none;
   user-select: none;
-}
-
-.aptr-minimum-work-threshold-line {
-  stroke: #ce2635;
-  stroke-width: 3;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-
-.aptr-minimum-work-threshold-label {
-  fill: #bc1d2b;
-  font-size: 12px;
-  font-weight: 950;
-  letter-spacing: 0.01em;
-  paint-order: stroke fill;
-  stroke: rgba(255, 255, 255, 0.98);
-  stroke-width: 4px;
-  stroke-linejoin: round;
 }
 
 .aptr-work-package-asterisk {

@@ -67,19 +67,34 @@ const initialFilters = {
   stayCaseWeight: "1",
   asylumPriorityFactor: "1.25",
 
-  matrixActivityOrder: "MAT,LIGHT,Auditions,Séjour",
+  matrixActivityOrder: "Auditions,MAT,LIGHT,Séjour",
 
-  // Affichage des valeurs dans les lignes divisions.
-  // false par défaut : seules les divisions sont affichées.
-  // true via URL : affiche division + valeur.
+  // Largeur de la zone contenant les colonnes d'activités (en %).
+  // 100 = largeur actuelle, 85 = 85 % de la largeur disponible.
+  // La zone reste centree horizontalement ; la jauge ne change pas.
+  // Plage acceptee : 40 a 100 % (en dessous, les labels deviennent illisibles).
+  matrixActivityContainerWidthPercent: "80",
+
+  // Séjour : subdivision VISUELLE de chaque domaine en 3 bandes verticales.
+  // Les 3 nombres sont des poids relatifs (ex. 20,30,50 = 20 % / 30 % / 50 %).
+  // ADAR et DB ZI sont configurés indépendamment ; les poids n'ajoutent pas
+  // de volumes de travail et sont automatiquement normalisés.
+  matrixStaySubdivisionRatiosADAR: "20,30,50",
+  matrixStaySubdivisionRatiosDBZI: "20,30,50",
+
+  // false : affiche uniquement les intitulés (aucun chiffre dans la matrice).
+  // true : affiche aussi les totaux MAT/LIGHT/Auditions/Séjour,
+  // les chiffres par division et la note sur les paquets Séjour.
+  // La jauge Pendenzen conserve ses valeurs dans les deux modes.
   showDivisionValues: "false",
 
   // Seuil minimum de travail (repère VISUEL uniquement).
   // Pourcentage de hauteur mesuré depuis le BAS des colonnes :
   // 0 = seuil masqué, 33.33 = tiers inférieur, 50 = milieu, 100 = haut.
   // Ces deux paramètres sont également modifiables par l'URL.
+  matrixMinimumWorkThresholdOrientation: "vertical",
   matrixMinimumWorkThresholdPercent: "33.33",
-  matrixMinimumWorkThresholdLabel: "Seuil minimum de travail",
+  matrixMinimumWorkThresholdLabel: "Seuil de charge minimum",
 
   // Animation / réaction.
   matrixReactionDelayMs: 600,

@@ -13,6 +13,7 @@ import Example10 from "./pages/Example10";
 import Example11 from "./pages/Example11";
 import Example12 from "./pages/Example12";
 import Example13 from "./pages/Example13";
+import Example14 from "./pages/Example14";
 import "./css/styles.css";
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/example11" element={<Example11 />} />
         <Route path="/example12" element={<Example12 />} />
         <Route path="/example13" element={<Example13 />} />
+        <Route path="/example14" element={<Example14 />} />
       </Routes>
     </BrowserRouter>
   );

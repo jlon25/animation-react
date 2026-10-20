@@ -7,6 +7,9 @@ export default function ScenarioSlider({
   step = 1,
   onChange,
   onStepClick,
+  // Par défaut, comportement historique (arrondi au repère le plus proche).
+  // "reached" : le scénario actif change uniquement au franchissement du repère.
+  activationMode = "nearest",
 }) {
   if (!scenarios || scenarios.length <= 1) {
     return null;
@@ -15,12 +18,17 @@ export default function ScenarioSlider({
   const sliderMax = max ?? scenarios.length - 1;
   const sliderValue = value ?? activeScenarioIndex;
 
-  const nearestScenarioIndex = Math.max(
+  const activeIndex = Math.max(
     0,
-    Math.min(scenarios.length - 1, Math.round(sliderValue))
+    Math.min(
+      scenarios.length - 1,
+      activationMode === "reached"
+        ? Math.floor(Number(sliderValue) || 0)
+        : Math.round(Number(sliderValue) || 0)
+    )
   );
 
-  const activeScenario = scenarios[nearestScenarioIndex];
+  const activeScenario = scenarios[activeIndex];
 
   return (
     <section className="scenario-slider-panel">
@@ -36,7 +44,7 @@ export default function ScenarioSlider({
 
         {activeScenario.description && (
           <p
-            key={`scenario-message-${nearestScenarioIndex}`}
+            key={`scenario-message-${activeIndex}`}
             className="scenario-state-message"
           >
             {activeScenario.description}
@@ -61,7 +69,7 @@ export default function ScenarioSlider({
             key={scenario.name}
             type="button"
             className={
-              index === nearestScenarioIndex
+              index === activeIndex
                 ? "scenario-step is-active"
                 : "scenario-step"
             }

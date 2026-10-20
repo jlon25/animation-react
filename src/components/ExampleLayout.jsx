@@ -15,6 +15,16 @@ function getBooleanUrlParam(name) {
   return value === "true" || value === "1" || value === "yes";
 }
 
+function shouldShowMenuFromUrl() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const searchParams = new URLSearchParams(window.location.search);
+
+  return searchParams.get("hidden-menu") === "false";
+}
+
 function shouldStartAnimationFromUrl() {
   return (
     getBooleanUrlParam("isAnimated") ||
@@ -68,9 +78,9 @@ export default function ExampleLayout({
   const hasScenarios = scenarios.length > 0;
   const initialScenarioFilters = hasScenarios ? scenarios[0].filters : {};
 
-  const [filtersCollapsed, setFiltersCollapsed] = useState(() =>
-    getBooleanUrlParam("hidden-menu")
-  );
+  const showMenu = shouldShowMenuFromUrl();
+
+  const [filtersCollapsed, setFiltersCollapsed] = useState(() => !showMenu);
   const [isAnimating, setIsAnimating] = useState(() =>
     shouldStartAnimationFromUrl()
   );
@@ -173,6 +183,7 @@ export default function ExampleLayout({
     <>
       <Header
         filtersCollapsed={filtersCollapsed}
+        showFiltersToggle={showMenu}
         onToggleFilters={() => setFiltersCollapsed((value) => !value)}
       />
 
