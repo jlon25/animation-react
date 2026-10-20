@@ -265,48 +265,45 @@
   letter-spacing: -0.02em;
 }
 
-/* Repère horizontal de seuil minimum dans la matrice.
-   Il ne modifie pas les calculs de capacité ou de demande Asile. */
-    .aptr-matrix-minimum-work-threshold {
-      pointer-events: none;
-    }
-    
-    /* Contour pour garantir le contraste */
-    .aptr-matrix-minimum-work-threshold-outline {
-      stroke: #163a55;
-      stroke-width: 5;
-      stroke-dasharray: 7 6;
-      stroke-linecap: butt;
-      vector-effect: non-scaling-stroke;
-    }
-    
-    /* Trait principal */
-    .aptr-matrix-minimum-work-threshold-line {
-      stroke: #FFF0C2;
-      stroke-width: 5;
-      stroke-dasharray: 7 6;
-      stroke-linecap: butt;
-      vector-effect: non-scaling-stroke;
-    }
-  
-  /* Libellé du seuil */
-  .aptr-matrix-minimum-work-threshold-label {
-    fill: #FFF0C2;
-    font-size: 14px;
-    font-weight: 800;
-  
-    paint-order: stroke;
-    stroke: #163a55;
-    stroke-width: 3px;
-    stroke-linejoin: round;
-  
-    pointer-events: none;
-  }
+/* ============================================================
+   SEUIL MINIMUM DE TRAVAIL
+   Fonctionne horizontalement et verticalement.
+   Repère visuel uniquement, sans influence sur les calculs.
+   ============================================================ */
 
-  /* Halo discret pour maintenir la lisibilité
-       lorsque le seuil traverse une colonne. */
+.aptr-matrix-minimum-work-threshold {
+  pointer-events: none;
+}
+
+/* Contour foncé pour garantir la visibilité sur fond blanc */
+.aptr-matrix-minimum-work-threshold-outline {
+  stroke: #163a55;
+  stroke-width: 5;
+  stroke-dasharray: 7 6;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+  fill: none;
+}
+
+/* Trait principal : jaune pastel pâle */
+.aptr-matrix-minimum-work-threshold-line {
+  stroke: #fff0c2;
+  stroke-width: 2.8;
+  stroke-dasharray: 7 6;
+  stroke-linecap: butt;
+  vector-effect: non-scaling-stroke;
+  fill: none;
+}
+
+/* Libellé du seuil */
+.aptr-matrix-minimum-work-threshold-label {
+  fill: #fff0c2;
+  font-size: 14px;
+  font-weight: 800;
+
+  /* Contour sombre pour assurer la lisibilité */
   paint-order: stroke;
-  stroke: rgba(255, 255, 255, 0.9);
+  stroke: #163a55;
   stroke-width: 3px;
   stroke-linejoin: round;
 
