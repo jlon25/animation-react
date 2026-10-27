@@ -93,7 +93,7 @@ const initialFilters = {
   // 0 = seuil masqué, 33.33 = tiers inférieur, 50 = milieu, 100 = haut.
   // Ces deux paramètres sont également modifiables par l'URL.
   matrixMinimumWorkThresholdOrientation: "vertical",
-  matrixMinimumWorkThresholdPercent: "33.33",
+  matrixMinimumWorkThresholdPercent: "0",
   matrixMinimumWorkThresholdLabel: "Seuil de charge minimum",
 
   // Animation / réaction.
